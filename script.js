@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendButton = document.getElementById('send-button');
 
     // URL til din backend-server (DENNE MÅ ENDRES SENERE!)
-    const backendUrl = 'http://localhost:5000/chat'; // Midlertidig verdi
+   const backendUrl = 'https://b9280818-97da-4f17-9c2e-db08824cd4f1-00-2btl4c4c21klj.picard.replit.dev/chat';
 
     function addMessageToChat(message, sender) {
         const messageElement = document.createElement('div');
