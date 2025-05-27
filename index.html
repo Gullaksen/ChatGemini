@@ -8,13 +8,18 @@
 </head>
 <body>
     <div id="chat-container">
-        <h1>Gullaksen Chatbot</h1>
-        
-        <div class="theme-toggle-container">
-            <label class="switch">
-                <input type="checkbox" id="theme-toggle-checkbox">
-                <span class="slider round"></span>
-            </label>
+        <!-- ENDRET: Ny #chat-header struktur -->
+        <div id="chat-header">
+            <button id="menu-toggle-button" title="Meny">
+                ☰ <!-- Hamburger-ikon -->
+            </button>
+            <h1 id="chat-title-main">Gullaksen Chatbot</h1>
+            <div class="theme-toggle-container">
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle-checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
         </div>
         
         <div id="chat-window">
@@ -27,6 +32,34 @@
         <p class="disclaimer-text">Chatboten kan ta feil.</p> 
         <div id="chat-controls">
             <button id="clear-chat-button">Slett Chat</button>
+        </div>
+    </div>
+
+    <!-- NYTT: Meny Overlay -->
+    <div id="menu-overlay" class="hidden"> <!-- Starter skjult -->
+        <div id="menu-overlay-content-wrapper">
+            <div id="menu-overlay-header">
+                <h2>Meny</h2>
+                <button id="close-menu-button" title="Lukk meny">
+                    × <!-- Kryss-ikon -->
+                </button>
+            </div>
+            <div id="menu-overlay-content">
+                <div class="menu-section">
+                    <h3>Velg Chat-bakgrunn</h3>
+                    <div id="background-selector">
+                        <button class="bg-choice" data-bg="default" title="Standard bakgrunn"></button>
+                        <button class="bg-choice" data-bg="lightgray" title="Lys grå"></button>
+                        <button class="bg-choice" data-bg="lightblue" title="Lys blå"></button>
+                        <button class="bg-choice" data-bg="lightgreen" title="Lys grønn"></button>
+                        <button class="bg-choice" data-bg-image="image1" title="Bildebakgrunn 1 (krever bilde)" style="background-image: url('placeholder-bg1.png');"></button> 
+                        <!-- Legg til flere knapper for flere farger/bilder -->
+                    </div>
+                </div>
+                <div class="menu-section">
+                    <p>Mer kommer snart...</p>
+                </div>
+            </div>
         </div>
     </div>
 
