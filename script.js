@@ -3,25 +3,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
 
-    // --- NYTT FOR TEMAKNAPP ---
-    const themeToggleButton = document.getElementById('theme-toggle-button');
+    // --- OPPDATERT FOR TEMABRYTER ---
+    const themeToggleCheckbox = document.getElementById('theme-toggle-checkbox'); // Endret ID
     const bodyElement = document.body;
-    // -------------------------
+    // ------------------------------
 
-    // URL til din backend-server (DENNE MÅ ENDRES SENERE!)
     const backendUrl = 'https://b9280818-97da-4f17-9c2e-db08824cd4f1-00-2btl4c4c21klj.picard.replit.dev/chat';
 
-    // --- NY FUNKSJON FOR TEMABYTTING ---
+    // --- OPPDATERT FUNKSJON FOR TEMABYTTING ---
     const toggleTheme = () => {
-        bodyElement.classList.toggle('dark-mode');
-        
-        // Lagre valgt tema i localStorage
-        if (bodyElement.classList.contains('dark-mode')) {
+        // Bytt basert på om checkboxen ER sjekket (for mørkt tema)
+        if (themeToggleCheckbox.checked) {
+            bodyElement.classList.add('dark-mode');
             localStorage.setItem('theme', 'dark');
-            themeToggleButton.textContent = 'Lyst Tema'; // Oppdater knappetekst
         } else {
+            bodyElement.classList.remove('dark-mode');
             localStorage.setItem('theme', 'light');
-            themeToggleButton.textContent = 'Mørkt Tema'; // Oppdater knappetekst
         }
     };
 
@@ -29,18 +26,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         bodyElement.classList.add('dark-mode');
-        if(themeToggleButton) themeToggleButton.textContent = 'Lyst Tema';
+        if(themeToggleCheckbox) themeToggleCheckbox.checked = true; // Sett checkbox til "på"
     } else {
-        if(themeToggleButton) themeToggleButton.textContent = 'Mørkt Tema';
+        bodyElement.classList.remove('dark-mode'); // Sørg for at lyst tema er aktivt
+        if(themeToggleCheckbox) themeToggleCheckbox.checked = false; // Sett checkbox til "av"
     }
 
-    // Legg til hendelseslytter på temaknappen
-    if (themeToggleButton) {
-        themeToggleButton.addEventListener('click', toggleTheme);
+    // Legg til hendelseslytter på temabryteren (change event for checkbox)
+    if (themeToggleCheckbox) {
+        themeToggleCheckbox.addEventListener('change', toggleTheme);
     }
     // ------------------------------------
 
-
+    // ... resten av din sendMessage og annen logikk forblir den samme ...
     function addMessageToChat(message, sender) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
@@ -118,10 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (sendButton) { // Sjekk om knappen finnes før event listener legges til
+    if (sendButton) {
         sendButton.addEventListener('click', sendMessage);
     }
-    if (userInput) { // Sjekk om inputfeltet finnes
+    if (userInput) {
         userInput.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
                 sendMessage();
