@@ -3,8 +3,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
 
+    // --- NYTT FOR TEMAKNAPP ---
+    const themeToggleButton = document.getElementById('theme-toggle-button');
+    const bodyElement = document.body;
+    // -------------------------
+
     // URL til din backend-server (DENNE MÅ ENDRES SENERE!)
-   const backendUrl = 'https://b9280818-97da-4f17-9c2e-db08824cd4f1-00-2btl4c4c21klj.picard.replit.dev/chat';
+    const backendUrl = 'https://b9280818-97da-4f17-9c2e-db08824cd4f1-00-2btl4c4c21klj.picard.replit.dev/chat';
+
+    // --- NY FUNKSJON FOR TEMABYTTING ---
+    const toggleTheme = () => {
+        bodyElement.classList.toggle('dark-mode');
+        
+        // Lagre valgt tema i localStorage
+        if (bodyElement.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            themeToggleButton.textContent = 'Lyst Tema'; // Oppdater knappetekst
+        } else {
+            localStorage.setItem('theme', 'light');
+            themeToggleButton.textContent = 'Mørkt Tema'; // Oppdater knappetekst
+        }
+    };
+
+    // Hent lagret tema ved lasting av siden
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        bodyElement.classList.add('dark-mode');
+        if(themeToggleButton) themeToggleButton.textContent = 'Lyst Tema';
+    } else {
+        if(themeToggleButton) themeToggleButton.textContent = 'Mørkt Tema';
+    }
+
+    // Legg til hendelseslytter på temaknappen
+    if (themeToggleButton) {
+        themeToggleButton.addEventListener('click', toggleTheme);
+    }
+    // ------------------------------------
+
 
     function addMessageToChat(message, sender) {
         const messageElement = document.createElement('div');
@@ -83,10 +118,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    sendButton.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            sendMessage();
-        }
-    });
+    if (sendButton) { // Sjekk om knappen finnes før event listener legges til
+        sendButton.addEventListener('click', sendMessage);
+    }
+    if (userInput) { // Sjekk om inputfeltet finnes
+        userInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    }
 });
