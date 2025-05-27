@@ -23,7 +23,8 @@ body {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: hidden; /* Viktig for absolutt posisjonering inni */
+    position: relative; /* Viktig for absolutt posisjonering av bryter */
     transition: background-color 0.3s, box-shadow 0.3s; /* For jevn overgang */
 }
 
@@ -38,11 +39,12 @@ h1 {
     transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* For jevn overgang */
 }
 
-/* --- NY STIL FOR TEMAKNAPP --- */
+/* --- FJERN GAMMEL STIL FOR TEMAKNAPP --- */
+/*
 #theme-toggle-button {
-    position: absolute; /* Gjør at vi kan plassere den i forhold til chat-container */
-    top: 25px; /* Juster etter behov for plassering ift. padding i chat-container og h1 */
-    right: 25px; /* Juster etter behov */
+    position: absolute; 
+    top: 25px; 
+    right: 25px; 
     padding: 6px 10px;
     background-color: #6c757d;
     color: white;
@@ -50,12 +52,82 @@ h1 {
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.8em;
-    z-index: 10; /* For å sikre at den er over andre elementer om nødvendig */
+    z-index: 10; 
     transition: background-color 0.3s;
 }
 
 #theme-toggle-button:hover {
     background-color: #5a6268;
+}
+*/
+/* ------------------------------------ */
+
+/* --- NY STIL FOR TEMABRYTER --- */
+.theme-toggle-container {
+    position: absolute;
+    top: 22px; /* Juster vertikal plassering etter ønske */
+    right: 20px; /* Juster horisontal plassering etter ønske */
+    z-index: 10; /* Sikrer at den ligger over andre elementer */
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;  /* Litt mindre enn standard for å passe bedre */
+    height: 28px; /* Litt mindre */
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc; /* Grå når "av" (lyst tema) */
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px; /* Størrelse på sirkelen */
+    width: 20px;  /* Størrelse på sirkelen */
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #007bff; /* Blå når "på" (mørkt tema), matcher Send-knapp */
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #007bff;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(22px); /* Justert for mindre størrelse */
+    -ms-transform: translateX(22px);
+    transform: translateX(22px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 28px; /* Justert for mindre størrelse */
+}
+
+.slider.round:before {
+    border-radius: 50%;
 }
 /* ----------------------------- */
 
@@ -67,9 +139,11 @@ h1 {
     border-bottom: 1px solid #ddd;
     display: flex;
     flex-direction: column;
-    background-color: #f9f9f9; /* Litt annen bakgrunn for selve chatvinduet */
-    transition: background-color 0.3s, border-color 0.3s; /* For jevn overgang */
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, border-color 0.3s;
 }
+
+/* ... resten av din CSS forblir den samme ... */
 
 .message {
     max-width: 80%;
@@ -77,7 +151,7 @@ h1 {
     padding: 10px 15px;
     border-radius: 18px;
     line-height: 1.4;
-    transition: background-color 0.3s, color 0.3s; /* For jevn overgang */
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .user-message {
@@ -101,8 +175,8 @@ h1 {
 #input-area {
     display: flex;
     padding: 15px;
-    background-color: #f0f0f0; /* Matcher body for konsistens i lys modus */
-    transition: background-color 0.3s; /* For jevn overgang */
+    background-color: #f0f0f0;
+    transition: background-color 0.3s;
 }
 
 #user-input {
@@ -112,9 +186,9 @@ h1 {
     border-radius: 20px;
     margin-right: 10px;
     font-size: 1em;
-    background-color: #fff; /* Hvit input felt bakgrunn */
-    color: #333; /* Mørk tekst i input felt */
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* For jevn overgang */
+    background-color: #fff;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
 #user-input::placeholder {
@@ -137,57 +211,59 @@ h1 {
     background-color: #0056b3;
 }
 
-/* For å vise en tenke-indikator */
 .thinking {
     font-style: italic;
     color: #777;
-    transition: color 0.3s; /* For jevn overgang */
+    transition: color 0.3s;
 }
 
 
-/* --- NYE STILER FOR MØRK MODUS --- */
+/* --- STILER FOR MØRK MODUS (beholdes og justeres om nødvendig) --- */
 body.dark-mode {
-    background-color: #2a2a2a; /* Mørkegrå bakgrunn */
-    color: #e0e0e0; /* Lysere tekst */
+    background-color: #2a2a2a;
+    color: #e0e0e0;
 }
 
 body.dark-mode #chat-container {
-    background-color: #333333; /* Mørkere container */
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5); /* Mørkere skygge */
+    background-color: #333333;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
 body.dark-mode h1 {
-    background-color: #0056b3; /* Mørkere blå */
+    background-color: #0056b3;
     color: #f0f0f0;
     border-bottom: 1px solid #444;
 }
 
-body.dark-mode #theme-toggle-button {
-    background-color: #4f565c;
-    color: #f0f0f0;
+/* Ingen spesifikk endring for bryteren her, 
+   den vil bruke standard farger med mindre du vil overstyre dem for mørk modus
+   For eksempel, hvis du vil at "av"-tilstanden skal være mørkere i mørk modus: */
+body.dark-mode .switch input:not(:checked) + .slider {
+    background-color: #555; /* Mørkere grå for "av" i mørk modus */
+}
+/* Og kanskje en annen "på"-farge hvis ønskelig */
+body.dark-mode .switch input:checked + .slider {
+    background-color: #0069d9; /* Kan være samme eller litt annerledes blå */
 }
 
-body.dark-mode #theme-toggle-button:hover {
-    background-color: #3a3f44;
-}
 
 body.dark-mode #chat-window {
-    background-color: #2c2c2c; /* Enda mørkere for selve chatvinduet */
+    background-color: #2c2c2c;
     border-bottom: 1px solid #444;
 }
 
 body.dark-mode .bot-message {
-    background-color: #4a4a4a; /* Mørk grå for bot-meldinger */
+    background-color: #4a4a4a;
     color: #e8e8e8;
 }
 
 body.dark-mode .user-message {
-    background-color: #005aaa; /* Litt mørkere/annerledes blå for bruker */
+    background-color: #005aaa;
     color: #ffffff;
 }
 
 body.dark-mode #input-area {
-    background-color: #2a2a2a; /* Matcher body.dark-mode */
+    background-color: #2a2a2a;
 }
 
 body.dark-mode #user-input {
@@ -201,7 +277,7 @@ body.dark-mode #user-input::placeholder {
 }
 
 body.dark-mode #send-button {
-    background-color: #0069d9; /* En litt annen blåtone for send-knapp i mørk modus */
+    background-color: #0069d9;
 }
 
 body.dark-mode #send-button:hover {
@@ -209,6 +285,6 @@ body.dark-mode #send-button:hover {
 }
 
 body.dark-mode .thinking {
-    color: #aaa; /* Lysere "tenker" tekst */
+    color: #aaa;
 }
 /* ----------------------------------- */
