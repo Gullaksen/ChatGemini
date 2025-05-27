@@ -1,295 +1,254 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const chatWindow = document.getElementById('chat-window');
-    const userInput = document.getElementById('user-input');
-    const sendButton = document.getElementById('send-button');
-    const themeToggleCheckbox = document.getElementById('theme-toggle-checkbox');
-    const bodyElement = document.body;
-    const clearChatButton = document.getElementById('clear-chat-button'); 
+/* Din eksisterende CSS (fra input_file_0.js) ... */
+body {
+    font-family: sans-serif;
+    display: flex; /* Endret for app-container */
+    /* justify-content: center; Fjerner disse da app-container styrer layout */
+    /* align-items: center; */
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0; 
+    color: #333; 
+    padding: 0; /* Endret til 0 for fullskjermslayout */
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s; 
+}
 
-    const backendUrl = 'https://b9280818-97da-4f17-9c2e-db08824cd4f1-00-2btl4c4c21klj.picard.replit.dev/chat';
+/* NYTT: Layout for hele appen */
+#app-container {
+    display: flex;
+    width: 100vw; 
+    height: 100vh; 
+    box-sizing: border-box;
+}
 
-    // --- TEMABYTTING ---
-    const toggleTheme = () => {
-        if (themeToggleCheckbox.checked) {
-            bodyElement.classList.add('dark-mode');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            bodyElement.classList.remove('dark-mode');
-            localStorage.setItem('theme', 'light');
-        }
-    };
+#sidebar {
+    width: 280px; /* Økt bredde litt */
+    background-color: #f9f9f9; /* Lysere enn bot-melding for bedre kontrast */
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    transition: background-color 0.3s, border-color 0.3s;
+    flex-shrink: 0; /* Forhindre at sidemenyen krymper */
+}
 
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        bodyElement.classList.add('dark-mode');
-        if(themeToggleCheckbox) themeToggleCheckbox.checked = true;
-    } else {
-        bodyElement.classList.remove('dark-mode');
-        if(themeToggleCheckbox) themeToggleCheckbox.checked = false;
-    }
+#sidebar-header {
+    padding: 15px 20px; /* Økt horisontal padding */
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff; /* Hvit bakgrunn for header */
+}
 
-    if (themeToggleCheckbox) {
-        themeToggleCheckbox.addEventListener('change', toggleTheme);
-    }
+#sidebar-header h2 {
+    margin: 0;
+    font-size: 1.1em; /* Litt mindre for å passe bedre */
+    color: #333;
+    font-weight: 600;
+}
 
-    // --- HJELPEFUNKSJONER FOR MELDINGER ---
-    function formatTime(date) {
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
-    }
+#new-chat-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 18px; /* Mer avrundet */
+    padding: 7px 14px; /* Litt mindre padding */
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+#new-chat-button:hover {
+    background-color: #0056b3;
+}
 
-    function addTimestamp(messageElement) { // Denne legger ALLTID til NÅVÆRENDE tid og returnerer det
-        let metaDiv = messageElement.querySelector('.message-meta');
-        if (!metaDiv) { 
-            metaDiv = document.createElement('div');
-            metaDiv.classList.add('message-meta');
-            messageElement.appendChild(metaDiv);
-        }
-        
-        const timestampSpan = document.createElement('span'); 
-        const currentTime = formatTime(new Date());
-        timestampSpan.textContent = currentTime;
-        
-        // For bot-meldinger (ikke error), plasser timestamp før kopier-knapp (som legges til sist)
-        // For bruker- og error-meldinger, legg til normalt (CSS vil høyrejustere)
-        if (messageElement.classList.contains('bot-message') && !messageElement.classList.contains('error-message')) { 
-             metaDiv.insertBefore(timestampSpan, metaDiv.firstChild); 
-        } else {
-            metaDiv.appendChild(timestampSpan); 
-        }
-        return currentTime; // Viktig for lagring i historikk
-    }
+#chat-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1; 
+}
 
-    // NY funksjon for å legge til timestamp fra historikk
-    function addTimestampFromText(messageElement, timestampText) {
-        let metaDiv = messageElement.querySelector('.message-meta');
-        if (!metaDiv) {
-            metaDiv = document.createElement('div');
-            metaDiv.classList.add('message-meta');
-            messageElement.appendChild(metaDiv);
-        }
-        const timestampSpan = document.createElement('span');
-        timestampSpan.textContent = timestampText;
-        
-        if (messageElement.classList.contains('bot-message') && !messageElement.classList.contains('error-message')) {
-             metaDiv.insertBefore(timestampSpan, metaDiv.firstChild);
-        } else {
-            metaDiv.appendChild(timestampSpan);
-        }
-    }
-    
-    function addCopyButton(messageElement, textToCopy) {
-        let metaDiv = messageElement.querySelector('.message-meta');
-        if (!metaDiv) { 
-            metaDiv = document.createElement('div');
-            metaDiv.classList.add('message-meta');
-            messageElement.appendChild(metaDiv);
-        }
+.chat-list-item {
+    padding: 12px 20px; /* Økt horisontal padding */
+    cursor: pointer;
+    border-bottom: 1px solid #eee; /* Lysere skillelinje */
+    font-size: 0.9em;
+    color: #333;
+    transition: background-color 0.2s, color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
 
-        const copyBtn = document.createElement('button');
-        copyBtn.classList.add('copy-button');
-        copyBtn.innerHTML = '⎘'; // Kopi-ikon (Unicode: U+2398) - Ser ut som to sider
-        copyBtn.title = 'Kopier melding';
+.chat-list-item:last-child {
+    border-bottom: none;
+}
 
-        copyBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); 
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                copyBtn.innerHTML = '✓'; // Hake-ikon (Unicode: U+2713)
-                copyBtn.title = 'Kopiert!';
-                setTimeout(() => {
-                    copyBtn.innerHTML = '⎘';
-                    copyBtn.title = 'Kopier melding';
-                }, 2000);
-            }).catch(err => {
-                console.error('Kunne ikke kopiere tekst: ', err);
-                copyBtn.textContent = 'Feil'; 
-                 setTimeout(() => {
-                    copyBtn.innerHTML = '⎘';
-                    copyBtn.title = 'Kopier melding';
-                }, 2000);
-            });
-        });
-        metaDiv.appendChild(copyBtn); 
-    }
+.chat-list-item:hover {
+    background-color: #e9e9eb;
+}
 
-    // Justert addMessageToChat for å håndtere 'error' type
-    function addMessageToChat(message, sender, type = '') { 
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message'); 
-
-        if (type === 'error') {
-            messageElement.classList.add('error-message');
-        } else {
-            messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-        }
-        
-        const pElement = document.createElement('p');
-        pElement.textContent = message;
-        messageElement.appendChild(pElement);
-        
-        return messageElement;
-    }
-
-    function showThinkingIndicator() {
-        const thinkingElement = document.createElement('div');
-        thinkingElement.classList.add('message', 'bot-message', 'thinking'); 
-        thinkingElement.id = 'thinking-indicator';
-        
-        const pElement = document.createElement('p');
-        pElement.textContent = "Tenker...";
-        thinkingElement.appendChild(pElement);
-
-        chatWindow.appendChild(thinkingElement); 
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-    }
-
-    function removeThinkingIndicator() {
-        const thinkingIndicator = document.getElementById('thinking-indicator');
-        if (thinkingIndicator) {
-            thinkingIndicator.remove();
-        }
-    }
-    
-    // --- CHAT HISTORIKK (LocalStorage) ---
-    const CHAT_HISTORY_KEY = 'gullaksenChatHistory_v2'; // Endret nøkkel for å unngå kollisjon med gammel struktur
-
-    function saveMessageToHistory(messageObject) {
-        const history = getChatHistory();
-        history.push(messageObject);
-        try {
-            localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
-        } catch (e) {
-            console.error("Feil ved lagring til localStorage (muligens full?):", e);
-        }
-    }
-
-    function getChatHistory() {
-        const historyJSON = localStorage.getItem(CHAT_HISTORY_KEY);
-        try {
-            return historyJSON ? JSON.parse(historyJSON) : [];
-        } catch (e) {
-            console.error("Feil ved parsing av historikk fra localStorage:", e);
-            localStorage.removeItem(CHAT_HISTORY_KEY); // Fjern korrupt data
-            return []; 
-        }
-    }
-
-    function clearChatHistory() {
-        localStorage.removeItem(CHAT_HISTORY_KEY);
-    }
-
-    function displayMessageFromHistory(messageObject) {
-        const messageElement = addMessageToChat(messageObject.text, messageObject.sender, messageObject.type || '');
-        addTimestampFromText(messageElement, messageObject.timestamp); 
-
-        if (messageObject.sender === 'bot' && (!messageObject.type || messageObject.type !== 'error')) {
-            addCopyButton(messageElement, messageObject.text);
-        }
-        chatWindow.appendChild(messageElement);
-    }
-
-    function loadChatHistory() {
-        chatWindow.innerHTML = ''; 
-        const history = getChatHistory();
-        
-        if (history.length === 0) { 
-            const welcomeText = "Hei! Hvordan kan jeg hjelpe deg i dag?";
-            const welcomeMessageElement = addMessageToChat(welcomeText, 'bot');
-            const currentTime = formatTime(new Date());
-            addTimestampFromText(welcomeMessageElement, currentTime); 
-            // Vurder å legge til kopier-knapp og lagre denne første meldingen hvis ønskelig
-            // addCopyButton(welcomeMessageElement, welcomeText);
-            // saveMessageToHistory({ text: welcomeText, sender: 'bot', timestamp: currentTime, type: '' });
-            chatWindow.appendChild(welcomeMessageElement);
-        } else {
-            history.forEach(displayMessageFromHistory);
-        }
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-    }
+.chat-list-item.active-chat {
+    background-color: #007bff;
+    color: white;
+    font-weight: 600; /* Litt tykkere for aktiv */
+}
+.chat-list-item.active-chat:hover { /* Sørg for at hover ikke overstyrer aktiv farge */
+    background-color: #0069d9;
+}
 
 
-    async function sendMessage() {
-        const messageText = userInput.value.trim();
-        if (messageText === '') return;
+/* Juster #chat-container for å passe ved siden av sidemenyen */
+#chat-container {
+    flex-grow: 1; 
+    height: 100vh; 
+    max-height: 100vh; /* Endret fra none for å unngå dobbel scrollbar med body */
+    /* Eksisterende #chat-container stiler beholdes for indre layout */
+    background-color: #fff; /* Standard bakgrunn */
+    border-radius: 0; /* Fjern radius hvis det var satt før */
+    box-shadow: none; /* Fjerner skygge hvis den var satt direkte her */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
+    position: relative; 
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
 
-        const userMessageElement = addMessageToChat(messageText, 'user');
-        const userTimestamp = addTimestamp(userMessageElement); 
-        chatWindow.appendChild(userMessageElement);
-        saveMessageToHistory({ text: messageText, sender: 'user', timestamp: userTimestamp, type: '' }); 
+#chat-container h1 { /* Overstyrer for å passe i ny layout */
+    font-size: 1.2em; /* Mindre for å passe bedre */
+    text-align: left; /* Venstrejustert tittel for chatten */
+    padding: 18px 20px; /* Justert padding */
+    /* margin: 0; */ /* Beholdes */
+    /* background-color: #007bff; */ /* Beholdes */
+    /* color: white; */ /* Beholdes */
+    border-bottom: 1px solid #ddd; /* Beholdes */
+    /* transition: ... */ /* Beholdes */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
-        userInput.value = '';
-        showThinkingIndicator(); 
 
-        try {
-            const response = await fetch(backendUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: messageText }),
-            });
+/* ... resten av din eksisterende CSS (message, user-message, bot-message, error-message, input-area, etc.) ... */
+/* Sørg for at .theme-toggle-container posisjoneres relativt til #chat-container (ikke body) */
+.theme-toggle-container {
+    position: absolute; /* Beholdt fra din kode */
+    top: 22px; 
+    right: 20px; 
+    z-index: 10; 
+}
 
-            removeThinkingIndicator();
-            let replyText;
-            let messageType = ''; 
+#chat-window {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    border-bottom: 1px solid #ddd; /* Kan fjernes hvis #input-area har top-border */
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9; /* Din eksisterende */
+    transition: background-color 0.3s, border-color 0.3s;
+}
 
-            if (!response.ok) {
-                let errorData = { reply: `Feil: ${response.status} ${response.statusText}`};
-                try { errorData = await response.json(); } catch (e) { /* Ignorer */ }
-                replyText = errorData.reply || errorData.error || `Serverfeil: ${response.status}`;
-                messageType = 'error'; 
-                console.error('Serverfeil:', response);
-            } else {
-                const data = await response.json();
-                if (data.reply) {
-                    replyText = data.reply;
-                } else if (data.error) {
-                    replyText = `Feil fra bot: ${data.error}`;
-                    messageType = 'error'; // Behandle bot-feil som error-type for styling
-                } else {
-                    replyText = "Fikk et uventet svar fra boten.";
-                    messageType = 'error'; // Behandle uventet svar som error-type
-                }
-            }
-            
-            const botMessageElement = addMessageToChat(replyText, 'bot', messageType);
-            const botTimestamp = addTimestamp(botMessageElement); 
-            if (messageType !== 'error') { 
-                addCopyButton(botMessageElement, replyText);
-            }
-            chatWindow.appendChild(botMessageElement);
-            saveMessageToHistory({ text: replyText, sender: 'bot', timestamp: botTimestamp, type: messageType }); 
+.message {
+    max-width: 80%;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    border-radius: 18px;
+    line-height: 1.4;
+    transition: background-color 0.3s, color 0.3s;
+    animation: fadeIn 0.4s ease-out;
+}
 
-        } catch (error) {
-            removeThinkingIndicator();
-            const errorText = 'Kunne ikke koble til chatbot-serveren. Sjekk at serveren kjører og at backendUrl er riktig.';
-            const errorMsgElement = addMessageToChat(errorText, 'bot', 'error'); 
-            const errorTimestamp = addTimestamp(errorMsgElement); 
-            chatWindow.appendChild(errorMsgElement);
-            saveMessageToHistory({ text: errorText, sender: 'bot', timestamp: errorTimestamp, type: 'error' }); 
-            console.error('Nettverksfeil eller feil ved sending/mottak:', error);
-        }
-        chatWindow.scrollTop = chatWindow.scrollHeight; 
-    }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-    // --- EVENT LISTENERS ---
-    if (sendButton) {
-        sendButton.addEventListener('click', sendMessage);
-    }
-    if (userInput) {
-        userInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        });
-    }
+.user-message { /* ... din eksisterende ... */ }
+.bot-message { /* ... din eksisterende ... */ }
+.error-message { /* ... din eksisterende ... */ }
+.error-message p::before { /* ... din eksisterende ... */ }
+.message p { /* ... din eksisterende ... */ }
+#input-area { /* ... din eksisterende ... */ }
+#user-input { /* ... din eksisterende ... */ }
+#user-input::placeholder { /* ... din eksisterende ... */ }
+#send-button { /* ... din eksisterende ... */ }
+#send-button:hover { /* ... din eksisterende ... */ }
+.thinking { /* ... din eksisterende ... */ }
+.disclaimer-text { /* ... din eksisterende ... */ }
+.message-meta { /* ... din eksisterende ... */ }
+.user-message .message-meta { /* ... din eksisterende ... */ }
+.bot-message .message-meta { /* ... din eksisterende ... */ }
+.error-message .message-meta { /* ... din eksisterende ... */ }
+.copy-button { /* ... din eksisterende ... */ }
+.copy-button:hover { /* ... din eksisterende ... */ }
+#chat-controls { /* ... din eksisterende ... */ }
+#clear-chat-button { /* ... din eksisterende ... */ }
 
-    if (clearChatButton) { 
-        clearChatButton.addEventListener('click', () => {
-            clearChatHistory(); 
-            loadChatHistory(); 
-        });
-    }
 
-    // --- INITIALISERING ---
-    loadChatHistory(); 
-});
+/* --- Mørk modus for sidemeny og justeringer --- */
+body.dark-mode #sidebar {
+    background-color: #2c2c2c;
+    border-right: 1px solid #3f3f3f; /* Litt lysere enn bakgrunn */
+}
+
+body.dark-mode #sidebar-header {
+    background-color: #333333; /* Samme som dark-mode #chat-container */
+    border-bottom: 1px solid #3f3f3f;
+}
+
+body.dark-mode #sidebar-header h2 {
+    color: #e0e0e0;
+}
+
+body.dark-mode #new-chat-button {
+    background-color: #0069d9;
+}
+body.dark-mode #new-chat-button:hover {
+    background-color: #0056b3;
+}
+
+body.dark-mode #chat-list-item {
+    border-bottom: 1px solid #3a3a3a; /* Mørkere skillelinje */
+    color: #ccc;
+}
+
+body.dark-mode #chat-list-item:hover {
+    background-color: #383838;
+}
+
+body.dark-mode #chat-list-item.active-chat {
+    background-color: #005aaa;
+    color: white;
+}
+body.dark-mode #chat-list-item.active-chat:hover {
+    background-color: #004c96;
+}
+
+/* ... resten av din eksisterende DARK MODE CSS ... */
+body.dark-mode #chat-container { /* ... din eksisterende ... */ }
+body.dark-mode #chat-container h1 { /* Sørg for at tittelen i mørk modus også er synlig */
+    background-color: #0056b3; /* Fra din eksisterende H1 dark mode */
+    color: #f0f0f0; /* Fra din eksisterende H1 dark mode */
+    border-bottom: 1px solid #444; /* Fra din eksisterende H1 dark mode */
+}
+body.dark-mode .switch input:not(:checked) + .slider { /* ... din eksisterende ... */ }
+body.dark-mode .switch input:checked + .slider { /* ... din eksisterende ... */ }
+body.dark-mode #chat-window { /* ... din eksisterende ... */ }
+body.dark-mode .bot-message { /* ... din eksisterende ... */ }
+body.dark-mode .error-message { /* ... din eksisterende ... */ }
+body.dark-mode .user-message { /* ... din eksisterende ... */ }
+body.dark-mode #input-area { /* ... din eksisterende ... */ }
+body.dark-mode #user-input { /* ... din eksisterende ... */ }
+body.dark-mode #user-input::placeholder { /* ... din eksisterende ... */ }
+body.dark-mode #send-button { /* ... din eksisterende ... */ }
+body.dark-mode #send-button:hover { /* ... din eksisterende ... */ }
+body.dark-mode .thinking { /* ... din eksisterende ... */ }
+body.dark-mode .disclaimer-text { /* ... din eksisterende ... */ }
+body.dark-mode .message-meta { /* ... din eksisterende ... */ }
+body.dark-mode .user-message .message-meta { /* ... din eksisterende ... */ }
+body.dark-mode .error-message .message-meta { /* ... din eksisterende ... */ }
+body.dark-mode .copy-button { /* ... din eksisterende ... */ }
+body.dark-mode #clear-chat-button { /* ... din eksisterende ... */ }
