@@ -5,16 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Min Gemini Chatbot</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Legg til link til et ikonbibliotek hvis du vil ha penere ikoner, f.eks. Font Awesome -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
 </head>
 <body>
     <div id="chat-container">
-        <h1>Gullaksen Chatbot</h1>
-        
-        <div class="theme-toggle-container">
-            <label class="switch">
-                <input type="checkbox" id="theme-toggle-checkbox">
-                <span class="slider round"></span>
-            </label>
+        <div id="chat-header"> <!-- NYTT: Wrapper for header-innhold -->
+            <button id="menu-toggle-button" title="Meny">
+                ☰ <!-- Hamburger-ikon (Unicode) -->
+                <!-- Alternativt med Font Awesome: <i class="fas fa-bars"></i> -->
+            </button>
+            <h1 id="chat-title-main">Gullaksen Chatbot</h1> <!-- Endret ID for å unngå konflikt -->
+            <div class="theme-toggle-container">
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle-checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
         </div>
         
         <div id="chat-window">
@@ -27,6 +34,20 @@
         <p class="disclaimer-text">Chatboten kan ta feil.</p> 
         <div id="chat-controls">
             <button id="clear-chat-button">Slett Chat</button>
+        </div>
+    </div>
+
+    <!-- NYTT: Meny Overlay -->
+    <div id="menu-overlay" class="hidden">
+        <div id="menu-overlay-header">
+            <h2>Meny</h2>
+            <button id="close-menu-button" title="Lukk meny">
+                × <!-- Kryss-ikon (Unicode) -->
+                <!-- Alternativt med Font Awesome: <i class="fas fa-times"></i> -->
+            </button>
+        </div>
+        <div id="menu-overlay-content">
+            <p>Menyen kommer snart...</p>
         </div>
     </div>
 
