@@ -217,6 +217,17 @@ input:checked + .slider:before {
     transition: color 0.3s;
 }
 
+/* NYTT: Stiler for disclaimer-teksten */
+.disclaimer-text {
+    font-size: 0.8em; /* Gjør teksten mindre */
+    color: #888888;   /* Svak tekstfarge for lyst tema */
+    text-align: center;
+    padding: 0 15px 10px 15px; /* Padding: 0 topp, 15px horisontal, 10px bunn */
+    margin: 0;        /* Fjerner standard avsnittsmargin */
+    background-color: transparent; /* Arver bakgrunnen til chat-container */
+    transition: color 0.3s; /* Jevn fargeovergang for temabytte */
+}
+
 
 /* --- STILER FOR MØRK MODUS (beholdes og justeres om nødvendig) --- */
 body.dark-mode {
@@ -286,5 +297,10 @@ body.dark-mode #send-button:hover {
 
 body.dark-mode .thinking {
     color: #aaa;
+}
+
+/* NYTT: Mørk modus stil for disclaimer-teksten */
+body.dark-mode .disclaimer-text {
+    color: #bbbbbb; /* Svak tekstfarge for mørkt tema (lysere enn vanlig mørk tekst) */
 }
 /* ----------------------------------- */
