@@ -1,0 +1,281 @@
+/* Din eksisterende CSS fra input_file_0.js ... */
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0; 
+    color: #333; 
+    padding: 20px; /* Beholdt, da #chat-container er hovedelementet som sentreres */
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s; 
+}
+
+#chat-container {
+    width: 100%;
+    max-width: 500px;
+    height: 70vh;
+    max-height: 600px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
+    position: relative; /* Viktig for .theme-toggle-container hvis den skal være absolutt inni her */
+    transition: background-color 0.3s, box-shadow 0.3s; 
+}
+
+/* NYTT/JUSTERT: Header styling */
+#chat-header {
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; Fjernet, lar elementene flyte naturlig, eller tittel tar plass */
+    padding: 10px 15px; 
+    background-color: #007bff;
+    color: white;
+    border-bottom: 1px solid #ddd; 
+    /* position: relative; Ikke nødvendig her hvis .theme-toggle-container er static inni */
+}
+
+#menu-toggle-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.7em; /* Justert størrelse */
+    cursor: pointer;
+    padding: 0 10px 0 0; /* Høyre padding for avstand */
+    line-height: 1;
+    margin-right: 10px; /* Avstand til tittelen */
+}
+#menu-toggle-button:hover {
+    opacity: 0.8;
+}
+
+#chat-header h1#chat-title-main { 
+    font-size: 1.3em; 
+    margin: 0; 
+    padding: 0; 
+    background-color: transparent; 
+    border-bottom: none; 
+    text-align: left; /* Venstrejuster tittelen ved siden av menyknappen */
+    flex-grow: 1; /* Lar tittelen ta opp tilgjengelig plass */
+    /* Overstyrer global H1 for transition og farge her hvis nødvendig, men arves fra #chat-header */
+    color: white; /* Sikrer hvit farge */
+    transition: none; /* Fjerner transition hvis H1 hadde det globalt */
+}
+
+/* Posisjonering av temabryter INNE i #chat-header */
+#chat-header .theme-toggle-container {
+    position: static; /* Eller juster absolutt posisjonering ift. #chat-header */
+    margin-left: auto; /* Skyver den til høyre */
+    padding-left: 10px; /* Litt pusterom */
+    /* Behold eksisterende .switch og .slider stiler */
+}
+.switch { /* ... din eksisterende .switch ... */ }
+.slider { /* ... din eksisterende .slider ... */ }
+.slider:before { /* ... din eksisterende .slider:before ... */ }
+input:checked + .slider { /* ... din eksisterende ... */ }
+input:focus + .slider { /* ... din eksisterende ... */ }
+input:checked + .slider:before { /* ... din eksisterende ... */ }
+.slider.round { /* ... din eksisterende ... */ }
+.slider.round:before { /* ... din eksisterende ... */ }
+
+
+/* ... Resten av din eksisterende CSS for #chat-window, .message, etc. ... */
+#chat-window {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.message {
+    max-width: 80%;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    border-radius: 18px;
+    line-height: 1.4;
+    transition: background-color 0.3s, color 0.3s;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.user-message { /* ... din eksisterende ... */ }
+.bot-message { /* ... din eksisterende ... */ }
+.error-message { /* ... din eksisterende ... */ }
+.error-message p::before { /* ... din eksisterende ... */ }
+.message p { /* ... din eksisterende ... */ }
+#input-area { /* ... din eksisterende ... */ }
+#user-input { /* ... din eksisterende ... */ }
+#user-input::placeholder { /* ... din eksisterende ... */ }
+#send-button { /* ... din eksisterende ... */ }
+#send-button:hover { /* ... din eksisterende ... */ }
+.thinking { /* ... din eksisterende ... */ }
+.disclaimer-text { /* ... din eksisterende ... */ }
+.message-meta { /* ... din eksisterende ... */ }
+.user-message .message-meta { /* ... din eksisterende ... */ }
+.bot-message .message-meta { /* ... din eksisterende ... */ }
+.error-message .message-meta { /* ... din eksisterende ... */ }
+.copy-button { /* ... din eksisterende ... */ }
+.copy-button:hover { /* ... din eksisterende ... */ }
+#chat-controls { /* ... din eksisterende ... */ }
+#clear-chat-button { /* ... din eksisterende ... */ }
+
+
+/* NYTT: Stiler for Meny Overlay */
+#menu-overlay {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Litt mørkere bakgrunn */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; 
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease-in-out, visibility 0s linear 0.25s; /* Raskere overgang */
+}
+
+#menu-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s; /* Umiddelbar synlighet når klassen legges til */
+}
+
+#menu-overlay-content-wrapper { 
+    background-color: #fff; 
+    color: #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Litt mykere skygge */
+    width: 100%;
+    max-width: 500px; /* Samme som #chat-container */
+    height: 70vh;
+    max-height: 600px; /* Samme som #chat-container */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(20px) scale(0.98); /* Starter litt nede og mindre */
+    transition: transform 0.25s ease-in-out, opacity 0.2s ease-in-out; /* Opacity også her for jevnere inntoning */
+    opacity: 0; /* Start usynlig for wrapper også */
+}
+
+#menu-overlay.visible #menu-overlay-content-wrapper {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+#menu-overlay-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #f7f7f7; /* Lysere header for meny */
+    border-bottom: 1px solid #e0e0e0; /* Mykere border */
+}
+
+#menu-overlay-header h2 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #333; /* Mørk tekst på lys header */
+}
+
+#close-menu-button {
+    background: none;
+    border: none;
+    font-size: 1.9em; /* Større kryss */
+    cursor: pointer;
+    color: #666; /* Mørkere grå */
+    padding: 0;
+    line-height: 1;
+}
+#close-menu-button:hover {
+    color: #000;
+}
+
+#menu-overlay-content {
+    padding: 25px; /* Mer padding */
+    text-align: center;
+    flex-grow: 1;
+    overflow-y: auto;
+    font-size: 1.1em;
+}
+
+/* --- Mørk modus --- */
+body.dark-mode { /* ... din eksisterende ... */ }
+body.dark-mode #chat-container { /* ... din eksisterende ... */ }
+
+/* Mørk modus for den nye chat-headeren */
+body.dark-mode #chat-header {
+    background-color: #0056b3;
+    border-bottom: 1px solid #444;
+}
+body.dark-mode #chat-header h1#chat-title-main {
+    color: #f0f0f0;
+}
+body.dark-mode #menu-toggle-button {
+    color: #f0f0f0; /* Sikrer at menyknappen er hvit/lys */
+}
+body.dark-mode #chat-header .theme-toggle-container .slider { /* Standard slider i mørk modus */
+    background-color: #555;
+}
+body.dark-mode #chat-header .theme-toggle-container input:checked + .slider {
+    background-color: #0069d9; /* Eller en annen farge du foretrekker for "på" */
+}
+
+
+/* Mørk modus for Meny Overlay */
+body.dark-mode #menu-overlay-content-wrapper {
+    background-color: #3a3a3a; /* Litt lysere enn chat-container bakgrunn */
+    color: #e0e0e0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+body.dark-mode #menu-overlay-header {
+    background-color: #444444; 
+    border-bottom: 1px solid #555;
+}
+
+body.dark-mode #menu-overlay-header h2 {
+    color: #f0f0f0;
+}
+
+body.dark-mode #close-menu-button {
+    color: #bbb;
+}
+body.dark-mode #close-menu-button:hover {
+    color: #fff;
+}
+
+/* ... Resten av din eksisterende DARK MODE CSS ... */
+body.dark-mode .switch input:not(:checked) + .slider { /* ... din eksisterende ... */ }
+body.dark-mode .switch input:checked + .slider { /* ... din eksisterende ... */ }
+body.dark-mode #chat-window { /* ... din eksisterende ... */ }
+body.dark-mode .bot-message { /* ... din eksisterende ... */ }
+body.dark-mode .error-message { /* ... din eksisterende ... */ }
+body.dark-mode .user-message { /* ... din eksisterende ... */ }
+body.dark-mode #input-area { /* ... din eksisterende ... */ }
+body.dark-mode #user-input { /* ... din eksisterende ... */ }
+body.dark-mode #user-input::placeholder { /* ... din eksisterende ... */ }
+body.dark-mode #send-button { /* ... din eksisterende ... */ }
+body.dark-mode #send-button:hover { /* ... din eksisterende ... */ }
+body.dark-mode .thinking { /* ... din eksisterende ... */ }
+body.dark-mode .disclaimer-text { /* ... din eksisterende ... */ }
+body.dark-mode .message-meta { /* ... din eksisterende ... */ }
+body.dark-mode .user-message .message-meta { /* ... din eksisterende ... */ }
+body.dark-mode .error-message .message-meta { /* ... din eksisterende ... */ }
+body.dark-mode .copy-button { /* ... din eksisterende ... */ }
+body.dark-mode #clear-chat-button { /* ... din eksisterende ... */ }
