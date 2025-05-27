@@ -7,26 +7,38 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="chat-container">
-        <h1>Gullaksen Chatbot</h1>
-        
-        <div class="theme-toggle-container">
-            <label class="switch">
-                <input type="checkbox" id="theme-toggle-checkbox">
-                <span class="slider round"></span>
-            </label>
+    <div id="app-container"> <!-- NYTT: Omsluttende container for layout -->
+        <div id="sidebar">
+            <div id="sidebar-header">
+                <h2>Mine Chatter</h2>
+                <button id="new-chat-button">+ Ny Chat</button>
+            </div>
+            <ul id="chat-list">
+                <!-- Chat-elementer vil bli lagt til her av JavaScript -->
+            </ul>
         </div>
-        
-        <div id="chat-window">
-            <!-- Meldinger vil vises her dynamisk via JavaScript (loadChatHistory) -->
-        </div>
-        <div id="input-area">
-            <input type="text" id="user-input" placeholder="Skriv meldingen din her...">
-            <button id="send-button">Send</button>
-        </div>
-        <p class="disclaimer-text">Chatboten kan ta feil.</p> 
-        <div id="chat-controls">
-            <button id="clear-chat-button">Slett Chat</button>
+
+        <div id="chat-container"> <!-- Dette var den gamle hovedcontaineren -->
+            <h1 id="chat-title">Gullaksen Chatbot</h1> <!-- Lagt til ID for dynamisk tittel -->
+            
+            <div class="theme-toggle-container">
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle-checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            
+            <div id="chat-window">
+                <!-- Meldinger vil vises her dynamisk -->
+            </div>
+            <div id="input-area">
+                <input type="text" id="user-input" placeholder="Skriv meldingen din her...">
+                <button id="send-button">Send</button>
+            </div>
+            <p class="disclaimer-text">Chatboten kan ta feil.</p> 
+            <div id="chat-controls">
+                <button id="clear-chat-button">Slett Aktiv Chat</button> <!-- Endret tekst -->
+            </div>
         </div>
     </div>
 
