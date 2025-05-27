@@ -224,6 +224,7 @@ input:checked + .slider:before {
     text-align: center;
     padding: 0 15px 10px 15px; /* Padding: 0 topp, 15px horisontal, 10px bunn */
     margin: 0;        /* Fjerner standard avsnittsmargin */
+    margin-top: 10px; /* ENDRET: Lagt til margin-top for å flytte teksten ned */
     background-color: transparent; /* Arver bakgrunnen til chat-container */
     transition: color 0.3s; /* Jevn fargeovergang for temabytte */
 }
