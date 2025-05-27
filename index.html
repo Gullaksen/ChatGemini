@@ -9,7 +9,18 @@
 <body>
     <div id="chat-container">
         <h1>Gullaksen Chatbot</h1>
-        <button id="theme-toggle-button">Bytt Tema</button> <!-- << NY KNAPP HER -->
+        
+        <!-- GAMMEL KNAPP FJERNES -->
+        <!-- <button id="theme-toggle-button">Bytt Tema</button> -->
+
+        <!-- NY TEMABRYTER -->
+        <div class="theme-toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="theme-toggle-checkbox">
+                <span class="slider round"></span>
+            </label>
+        </div>
+        
         <div id="chat-window">
             <!-- Meldinger vil vises her -->
             <div class="message bot-message">
