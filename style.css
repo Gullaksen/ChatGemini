@@ -24,7 +24,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden; /* Viktig for absolutt posisjonering inni */
-    position: relative; /* Viktig for absolutt posisjonering av bryter */
+    position: relative; /* Viktig for absolutt posisjonering av bryter og meny */
     transition: background-color 0.3s, box-shadow 0.3s; /* For jevn overgang */
 }
 
@@ -37,9 +37,8 @@ h1 {
     color: white;
     border-bottom: 1px solid #ddd;
     transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* For jevn overgang */
-    /* NYTT: Justering for å gi plass til hamburgermeny */
     position: relative; 
-    padding-left: 50px; /* Juster denne verdien etter behov */
+    padding-left: 50px; /* Juster denne verdien etter behov for hamburgermeny */
 }
 
 /* --- STIL FOR TEMABRYTER --- */
@@ -290,7 +289,6 @@ input:checked + .slider:before {
     background-color: #5a6268;
 }
 
-
 /* --- STILER FOR MØRK MODUS --- */
 body.dark-mode {
     background-color: #2a2a2a;
@@ -390,7 +388,7 @@ body.dark-mode #clear-chat-button:hover {
     background-color: #4a4a4a;
 }
 
-/* --- NYTT: STILER FOR HAMBURGERMENY OG DROPDOWN --- */
+/* --- STILER FOR HAMBURGERMENY OG DROPDOWN --- */
 #menu-container {
     position: absolute;
     top: 15px; 
@@ -420,23 +418,30 @@ body.dark-mode .hamburger-button:hover {
     background-color: rgba(255,255,255,0.1);
 }
 
-.hamburger-button span {
+/* ENDRING HER for å fikse synlighet i lyst tema */
+.hamburger-button span { /* Generelle strukturelle egenskaper for strekene */
     display: block;
-    width: 22px; 
-    height: 2px;  
-    background-color: #007bff; /* Strekfarge i lys modus */
+    width: 22px;
+    height: 2px;
     border-radius: 1px;
     transition: background-color 0.3s;
 }
 
-body.dark-mode .hamburger-button span {
-    background-color: #e0e0e0; /* Strekfarge i mørk modus */
+/* Farge for strekene i LYST TEMA */
+body:not(.dark-mode) .hamburger-button span {
+    background-color: #007bff; /* Blå streker, bør være synlig på hvit/lys bakgrunn */
 }
+
+/* Farge for strekene i MØRKT TEMA */
+body.dark-mode .hamburger-button span {
+    background-color: #e0e0e0; /* Lysegrå streker, synlig på mørk bakgrunn */
+}
+/* SLUTT PÅ ENDRING */
 
 .dropdown-menu {
     display: none; 
     position: absolute;
-    top: 50px; 
+    top: 50px; /* Avstand fra hamburgermenyen, juster ved behov */
     left: 0;
     background-color: #fff;
     border-radius: 8px;
