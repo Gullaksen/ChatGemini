@@ -4,7 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendButton = document.getElementById('send-button');
     const themeToggleCheckbox = document.getElementById('theme-toggle-checkbox');
     const bodyElement = document.body;
-    const clearChatButton = document.getElementById('clear-chat-button');
+    const clearChatButton = document.getElementById('clear-chat-button'); 
+
+    // NYE ELEMENTER FOR HAMBURGERMENY
+    const hamburgerButton = document.getElementById('hamburger-button');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    const loginButtonMenu = document.getElementById('login-button-menu');
 
     const backendUrl = 'https://b9280818-97da-4f17-9c2e-db08824cd4f1-00-2btl4c4c21klj.picard.replit.dev/chat';
 
@@ -32,6 +37,38 @@ document.addEventListener('DOMContentLoaded', () => {
         themeToggleCheckbox.addEventListener('change', toggleTheme);
     }
 
+    // --- LOGIKK FOR HAMBURGERMENY ---
+    if (hamburgerButton && dropdownMenu) {
+        hamburgerButton.addEventListener('click', (event) => {
+            event.stopPropagation(); 
+            const isExpanded = hamburgerButton.getAttribute('aria-expanded') === 'true' || false;
+            hamburgerButton.setAttribute('aria-expanded', !isExpanded);
+            dropdownMenu.classList.toggle('open');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (dropdownMenu.classList.contains('open') && 
+                !dropdownMenu.contains(event.target) && 
+                event.target !== hamburgerButton && 
+                !hamburgerButton.contains(event.target)) {
+                dropdownMenu.classList.remove('open');
+                hamburgerButton.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
+    if (loginButtonMenu) {
+        loginButtonMenu.addEventListener('click', () => {
+            alert('Logg inn-funksjonalitet er ikke implementert ennå.');
+            if (dropdownMenu && dropdownMenu.classList.contains('open')) {
+                dropdownMenu.classList.remove('open');
+                if (hamburgerButton) {
+                    hamburgerButton.setAttribute('aria-expanded', 'false');
+                }
+            }
+        });
+    }
+
     // --- HJELPEFUNKSJONER FOR MELDINGER ---
     function formatTime(date) {
         const hours = date.getHours().toString().padStart(2, '0');
@@ -41,20 +78,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function addTimestamp(messageElement) {
         let metaDiv = messageElement.querySelector('.message-meta');
-        if (!metaDiv) {
+        if (!metaDiv) { 
             metaDiv = document.createElement('div');
             metaDiv.classList.add('message-meta');
             messageElement.appendChild(metaDiv);
         }
-
-        const timestampSpan = document.createElement('span');
+        
+        const timestampSpan = document.createElement('span'); 
         const currentTime = formatTime(new Date());
         timestampSpan.textContent = currentTime;
-
-        if (messageElement.classList.contains('bot-message') && !messageElement.classList.contains('error-message')) {
-             metaDiv.insertBefore(timestampSpan, metaDiv.firstChild);
+        
+        if (messageElement.classList.contains('bot-message') && !messageElement.classList.contains('error-message')) { 
+             metaDiv.insertBefore(timestampSpan, metaDiv.firstChild); 
         } else {
-            metaDiv.appendChild(timestampSpan);
+            metaDiv.appendChild(timestampSpan); 
         }
         return currentTime;
     }
@@ -68,17 +105,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const timestampSpan = document.createElement('span');
         timestampSpan.textContent = timestampText;
-
+        
         if (messageElement.classList.contains('bot-message') && !messageElement.classList.contains('error-message')) {
              metaDiv.insertBefore(timestampSpan, metaDiv.firstChild);
         } else {
             metaDiv.appendChild(timestampSpan);
         }
     }
-
+    
     function addCopyButton(messageElement, textToCopy) {
         let metaDiv = messageElement.querySelector('.message-meta');
-        if (!metaDiv) {
+        if (!metaDiv) { 
             metaDiv = document.createElement('div');
             metaDiv.classList.add('message-meta');
             messageElement.appendChild(metaDiv);
@@ -86,14 +123,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const copyBtn = document.createElement('button');
         copyBtn.classList.add('copy-button');
-        copyBtn.innerHTML = '⎘';
+        copyBtn.innerHTML = '⎘'; 
         copyBtn.title = 'Kopier melding';
 
         copyBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            // Kopier den *originale* teksten, ikke den HTML-renderte
+            e.stopPropagation(); 
             navigator.clipboard.writeText(textToCopy).then(() => {
-                copyBtn.innerHTML = '✓';
+                copyBtn.innerHTML = '✓'; 
                 copyBtn.title = 'Kopiert!';
                 setTimeout(() => {
                     copyBtn.innerHTML = '⎘';
@@ -101,70 +137,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 2000);
             }).catch(err => {
                 console.error('Kunne ikke kopiere tekst: ', err);
-                copyBtn.textContent = 'Feil';
+                copyBtn.textContent = 'Feil'; 
                  setTimeout(() => {
                     copyBtn.innerHTML = '⎘';
                     copyBtn.title = 'Kopier melding';
                 }, 2000);
             });
         });
-        metaDiv.appendChild(copyBtn);
+        metaDiv.appendChild(copyBtn); 
     }
-
-    // *** NY FUNKSJON FOR ENKEL MARKDOWN RENDERING ***
+    
+    // Funksjon for enkel Markdown-rendering
     function renderSimpleMarkdown(text) {
-        if (typeof text !== 'string') return ''; // Sikrer at input er en streng
-
-        // NB: Dette er en veldig enkel implementering.
-        // For en robust løsning, bruk et bibliotek som 'marked.js' eller 'Showdown'.
-        // Vær også forsiktig med XSS-sårbarheter når du bruker .innerHTML.
-        // Et skikkelig bibliotek vil vanligvis ha "sanitizing" for å forhindre dette.
-
+        if (typeof text !== 'string') return '';
         let html = text;
         // Konverter fet tekst: **tekst** -> <strong>tekst</strong>
         html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         // Konverter kursiv tekst: *tekst* -> <em>tekst</em>
-        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        // Pass på at vi ikke feilaktig matcher stjerner som ikke er ment for kursiv.
+        // Dette regulære uttrykket ser etter en stjerne, så tegn som IKKE er stjerner, så en stjerne.
+        html = html.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>');
         // Konverter linjeskift: \n -> <br>
         html = html.replace(/\n/g, '<br>');
-
         return html;
     }
 
-    // *** OPPDATERT addMessageToChat FUNKSJON ***
-    function addMessageToChat(message, sender, type = '') {
+    function addMessageToChat(message, sender, type = '') { 
         const messageElement = document.createElement('div');
-        messageElement.classList.add('message');
+        messageElement.classList.add('message'); 
 
         if (type === 'error') {
             messageElement.classList.add('error-message');
         } else {
             messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
         }
-
+        
         const pElement = document.createElement('p');
-        // Bruk renderSimpleMarkdown og innerHTML i stedet for textContent
-        // Dette gjelder primært for bot-meldinger. Brukermeldinger vises som de er.
-        if (sender === 'bot') {
+        // Bruk renderSimpleMarkdown for bot-meldinger (ikke error), ellers textContent
+        if (sender === 'bot' && type !== 'error') {
             pElement.innerHTML = renderSimpleMarkdown(message);
         } else {
-            pElement.textContent = message; // Brukermeldinger vises som ren tekst
+            pElement.textContent = message; // Brukermeldinger og error-meldinger vises som ren tekst
         }
         messageElement.appendChild(pElement);
-
+        
         return messageElement;
     }
 
     function showThinkingIndicator() {
         const thinkingElement = document.createElement('div');
-        thinkingElement.classList.add('message', 'bot-message', 'thinking');
+        thinkingElement.classList.add('message', 'bot-message', 'thinking'); 
         thinkingElement.id = 'thinking-indicator';
-
+        
         const pElement = document.createElement('p');
         pElement.textContent = "Tenker...";
         thinkingElement.appendChild(pElement);
 
-        chatWindow.appendChild(thinkingElement);
+        chatWindow.appendChild(thinkingElement); 
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
@@ -174,13 +203,13 @@ document.addEventListener('DOMContentLoaded', () => {
             thinkingIndicator.remove();
         }
     }
-
+    
     // --- CHAT HISTORIKK (LocalStorage) ---
-    const CHAT_HISTORY_KEY = 'gullaksenChatHistory_v2';
+    const CHAT_HISTORY_KEY = 'gullaksenChatHistory_v2'; 
 
     function saveMessageToHistory(messageObject) {
         const history = getChatHistory();
-        history.push(messageObject);
+        history.push(messageObject); // Lagre originaltekst
         try {
             localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
         } catch (e) {
@@ -194,8 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return historyJSON ? JSON.parse(historyJSON) : [];
         } catch (e) {
             console.error("Feil ved parsing av historikk fra localStorage:", e);
-            localStorage.removeItem(CHAT_HISTORY_KEY);
-            return [];
+            localStorage.removeItem(CHAT_HISTORY_KEY); 
+            return []; 
         }
     }
 
@@ -204,31 +233,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayMessageFromHistory(messageObject) {
-        // Meldingen i messageObject.text er allerede den originale meldingen
-        // addMessageToChat vil håndtere renderingen hvis det er en bot-melding
+        // messageObject.text er originalteksten, addMessageToChat håndterer rendering
         const messageElement = addMessageToChat(messageObject.text, messageObject.sender, messageObject.type || '');
-        addTimestampFromText(messageElement, messageObject.timestamp);
+        addTimestampFromText(messageElement, messageObject.timestamp); 
 
-        // textToCopy for kopier-knappen bør være den originale teksten
         if (messageObject.sender === 'bot' && (!messageObject.type || messageObject.type !== 'error')) {
-            addCopyButton(messageElement, messageObject.text);
+            addCopyButton(messageElement, messageObject.text); // Gi originaltekst til kopier-knapp
         }
         chatWindow.appendChild(messageElement);
     }
 
     function loadChatHistory() {
-        chatWindow.innerHTML = '';
+        chatWindow.innerHTML = ''; 
         const history = getChatHistory();
-
-        if (history.length === 0) {
-            const welcomeText = "Hei! Hvordan kan jeg hjelpe deg i dag?";
-            // addMessageToChat vil rendre Markdown hvis boten sender det i velkomstmeldingen
-            const welcomeMessageElement = addMessageToChat(welcomeText, 'bot');
+        
+        if (history.length === 0) { 
+            const welcomeText = "Hei! Hvordan kan jeg hjelpe deg i dag?\nDu kan bruke **fet skrift** eller *kursiv* i svarene jeg gir.";
+            const welcomeMessageElement = addMessageToChat(welcomeText, 'bot'); // addMessageToChat vil rendre markdown
             const currentTime = formatTime(new Date());
-            addTimestampFromText(welcomeMessageElement, currentTime);
-            // Legg til kopier-knapp med den originale teksten
-            addCopyButton(welcomeMessageElement, welcomeText);
-            // Lagre den originale teksten
+            addTimestampFromText(welcomeMessageElement, currentTime); 
+            addCopyButton(welcomeMessageElement, welcomeText); // Kopier originaltekst
             // saveMessageToHistory({ text: welcomeText, sender: 'bot', timestamp: currentTime, type: '' }); // Valgfritt å lagre velkomst
             chatWindow.appendChild(welcomeMessageElement);
         } else {
@@ -237,19 +261,17 @@ document.addEventListener('DOMContentLoaded', () => {
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
-
     async function sendMessage() {
         const messageText = userInput.value.trim();
         if (messageText === '') return;
 
-        // Brukers melding (vises som ren tekst)
-        const userMessageElement = addMessageToChat(messageText, 'user');
-        const userTimestamp = addTimestamp(userMessageElement);
+        const userMessageElement = addMessageToChat(messageText, 'user'); // Brukermelding vises som ren tekst
+        const userTimestamp = addTimestamp(userMessageElement); 
         chatWindow.appendChild(userMessageElement);
-        saveMessageToHistory({ text: messageText, sender: 'user', timestamp: userTimestamp, type: '' });
+        saveMessageToHistory({ text: messageText, sender: 'user', timestamp: userTimestamp, type: '' }); 
 
         userInput.value = '';
-        showThinkingIndicator();
+        showThinkingIndicator(); 
 
         try {
             const response = await fetch(backendUrl, {
@@ -260,13 +282,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             removeThinkingIndicator();
             let replyText; // Dette vil være den originale teksten fra boten
-            let messageType = '';
+            let messageType = ''; 
 
             if (!response.ok) {
                 let errorData = { reply: `Feil: ${response.status} ${response.statusText}`};
                 try { errorData = await response.json(); } catch (e) { /* Ignorer */ }
                 replyText = errorData.reply || errorData.error || `Serverfeil: ${response.status}`;
-                messageType = 'error';
+                messageType = 'error'; 
                 console.error('Serverfeil:', response);
             } else {
                 const data = await response.json();
@@ -274,35 +296,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     replyText = data.reply;
                 } else if (data.error) {
                     replyText = `Feil fra bot: ${data.error}`;
-                    messageType = 'error';
+                    messageType = 'error'; 
                 } else {
                     replyText = "Fikk et uventet svar fra boten.";
-                    messageType = 'error';
+                    messageType = 'error'; 
                 }
             }
-
+            
             // addMessageToChat vil nå rendre Markdown for bot-meldinger
             const botMessageElement = addMessageToChat(replyText, 'bot', messageType);
-            const botTimestamp = addTimestamp(botMessageElement);
-            if (messageType !== 'error') {
-                // Kopier-knappen skal kopiere den *originale* teksten, ikke den renderte HTML-en
-                addCopyButton(botMessageElement, replyText);
+            const botTimestamp = addTimestamp(botMessageElement); 
+            if (messageType !== 'error') { 
+                addCopyButton(botMessageElement, replyText); // Gi originaltekst til kopier-knapp
             }
             chatWindow.appendChild(botMessageElement);
-            // Lagre den *originale* teksten i historikken
-            saveMessageToHistory({ text: replyText, sender: 'bot', timestamp: botTimestamp, type: messageType });
+            saveMessageToHistory({ text: replyText, sender: 'bot', timestamp: botTimestamp, type: messageType }); // Lagre originaltekst
 
         } catch (error) {
             removeThinkingIndicator();
             const errorText = 'Kunne ikke koble til chatbot-serveren. Sjekk at serveren kjører og at backendUrl er riktig.';
-            // addMessageToChat vil håndtere dette som en bot-melding (men den renderes ikke som Markdown siden det er 'error')
-            const errorMsgElement = addMessageToChat(errorText, 'bot', 'error');
-            const errorTimestamp = addTimestamp(errorMsgElement);
+            const errorMsgElement = addMessageToChat(errorText, 'bot', 'error'); 
+            const errorTimestamp = addTimestamp(errorMsgElement); 
             chatWindow.appendChild(errorMsgElement);
-            saveMessageToHistory({ text: errorText, sender: 'bot', timestamp: errorTimestamp, type: 'error' });
+            saveMessageToHistory({ text: errorText, sender: 'bot', timestamp: errorTimestamp, type: 'error' }); 
             console.error('Nettverksfeil eller feil ved sending/mottak:', error);
         }
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        chatWindow.scrollTop = chatWindow.scrollHeight; 
     }
 
     // --- EVENT LISTENERS ---
@@ -317,13 +336,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (clearChatButton) {
+    if (clearChatButton) { 
         clearChatButton.addEventListener('click', () => {
-            clearChatHistory();
-            loadChatHistory();
+            clearChatHistory(); 
+            loadChatHistory(); 
         });
     }
 
     // --- INITIALISERING ---
-    loadChatHistory();
+    loadChatHistory(); 
 });
