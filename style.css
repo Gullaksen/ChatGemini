@@ -37,9 +37,12 @@ h1 {
     color: white;
     border-bottom: 1px solid #ddd;
     transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* For jevn overgang */
+    /* NYTT: Justering for å gi plass til hamburgermeny */
+    position: relative; 
+    padding-left: 50px; /* Juster denne verdien etter behov */
 }
 
-/* --- NY STIL FOR TEMABRYTER --- */
+/* --- STIL FOR TEMABRYTER --- */
 .theme-toggle-container {
     position: absolute;
     top: 22px; 
@@ -124,7 +127,6 @@ input:checked + .slider:before {
     border-radius: 18px;
     line-height: 1.4;
     transition: background-color 0.3s, color 0.3s;
-    /* NYTT: Animasjon for nye meldinger */
     animation: fadeIn 0.4s ease-out;
 }
 
@@ -146,14 +148,13 @@ input:checked + .slider:before {
     border-bottom-right-radius: 5px;
 }
 
-.bot-message { /* Gjelder vanlige bot-meldinger, ikke error eller thinking */
+.bot-message { 
     background-color: #e9e9eb;
     color: #333;
     align-self: flex-start;
     border-bottom-left-radius: 5px;
 }
 
-/* NYTT: Stiler for feilmeldinger */
 .error-message {
     background-color: #ffebee; 
     color: #c62828; 
@@ -164,13 +165,12 @@ input:checked + .slider:before {
 
 .error-message p::before { 
     content: "⚠️ "; 
-    font-weight: normal; /* Litt mindre dominerende enn bold */
+    font-weight: normal;
 }
-
 
 .message p {
     margin: 0;
-    word-wrap: break-word; /* For lange ord uten mellomrom */
+    word-wrap: break-word;
 }
 
 #input-area {
@@ -212,10 +212,10 @@ input:checked + .slider:before {
     background-color: #0056b3;
 }
 
-.thinking { /* Dette er en meldingstype nå */
+.thinking { 
     font-style: italic;
     color: #777;
-    background-color: #f0f0f0; /* Litt annerledes bakgrunn for tenkeindikator */
+    background-color: #f0f0f0; 
     align-self: flex-start;
     border-bottom-left-radius: 5px;
     transition: color 0.3s, background-color 0.3s;
@@ -248,23 +248,22 @@ input:checked + .slider:before {
     justify-content: space-between; 
     align-items: center;
 }
-/* Unntak for error-message, den skal ikke ha flex for meta (kun timestamp) */
-.error-message .message-meta {
-    display: block; /* Overstyr flex */
-    text-align: right; /* Timestamp til høyre for feilmeldinger også */
-}
 
+.error-message .message-meta {
+    display: block; 
+    text-align: right; 
+}
 
 .copy-button {
     background: none;
     border: none;
     color: #007bff; 
     cursor: pointer;
-    font-size: 1.1em; /* Litt større for tydeligere ikon */
+    font-size: 1.1em;
     padding: 0 0 0 8px; 
-    opacity: 0.5; /* Litt mer dempet default */
+    opacity: 0.5; 
     transition: opacity 0.2s;
-    line-height: 1; /* For bedre vertikal justering av ikonet */
+    line-height: 1; 
 }
 
 .copy-button:hover {
@@ -321,7 +320,7 @@ body.dark-mode #chat-window {
     border-bottom: 1px solid #444;
 }
 
-body.dark-mode .bot-message { /* Vanlig bot-melding */
+body.dark-mode .bot-message { 
     background-color: #4a4a4a;
     color: #e8e8e8;
 }
@@ -375,10 +374,9 @@ body.dark-mode .message-meta {
 body.dark-mode .user-message .message-meta { 
     color: #ccc;
 }
-body.dark-mode .error-message .message-meta { /* For error-meldinger i mørk modus */
+body.dark-mode .error-message .message-meta { 
     color: #aaa;
 }
-
 
 body.dark-mode .copy-button {
     color: #4dabf7; 
@@ -391,4 +389,94 @@ body.dark-mode #clear-chat-button {
 body.dark-mode #clear-chat-button:hover {
     background-color: #4a4a4a;
 }
-/* ----------------------------------- */
+
+/* --- NYTT: STILER FOR HAMBURGERMENY OG DROPDOWN --- */
+#menu-container {
+    position: absolute;
+    top: 15px; 
+    left: 15px; 
+    z-index: 20; 
+}
+
+.hamburger-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%; 
+    transition: background-color 0.2s;
+}
+
+.hamburger-button:hover {
+    background-color: rgba(0,0,0,0.1); 
+}
+
+body.dark-mode .hamburger-button:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.hamburger-button span {
+    display: block;
+    width: 22px; 
+    height: 2px;  
+    background-color: #007bff; /* Strekfarge i lys modus */
+    border-radius: 1px;
+    transition: background-color 0.3s;
+}
+
+body.dark-mode .hamburger-button span {
+    background-color: #e0e0e0; /* Strekfarge i mørk modus */
+}
+
+.dropdown-menu {
+    display: none; 
+    position: absolute;
+    top: 50px; 
+    left: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 8px 0;
+    min-width: 150px; 
+    z-index: 19; 
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+body.dark-mode .dropdown-menu {
+    background-color: #3c3c3c; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.dropdown-menu.open {
+    display: block; 
+}
+
+.menu-item {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.95em;
+    color: #333; 
+    transition: background-color 0.2s, color 0.3s;
+}
+
+.menu-item:hover {
+    background-color: #f0f0f0;
+}
+
+body.dark-mode .menu-item {
+    color: #e0e0e0; 
+}
+
+body.dark-mode .menu-item:hover {
+    background-color: #4a4a4a;
+}
